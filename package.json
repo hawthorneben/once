@@ -1,0 +1,17 @@
+{
+  "name": "once",
+  "version": "1.0.0",
+  "description": "Ephemera digital art, composed of the IP addresses that have already been blocked",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "art",
+    "ephemeral",
+    "once"
+  ],
+  "author": "Ben Hawthorne",
+  "license": "ISC"
+}
