@@ -22,8 +22,12 @@ http.createServer(function (req, res)
     res.write(title);
     if (ip)
     {
-        res.write(ip[0]);
+        db.serialize(function() {
+            db.run("INSERT INTO LOOKUP values(" + ip[0] +") WHERE NOT EXISTS" +
+            "(SELECT VALUE FROM LOOKUP WHERE VALUE = " + ip[0] + ")");
+        });
     }
+
     db.serialize(() => {
         db.each(`SELECT VALUE as ip FROM LOOKUP`, function(err, row)
         {
@@ -31,13 +35,11 @@ http.createServer(function (req, res)
             {
                 console.error(err.message);
             }
-            res.write(row.ip);
+            res.write(row.ip + " ");
         }, function() {
             db.close();
             res.end();
         });
-
-        //res.end();
     });
 }).listen(80);
 
