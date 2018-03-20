@@ -36,8 +36,9 @@ http.createServer(function (req, res)
             {
                 if (blacklisted)
                 {
-                    res.writeHead(200, {'Content-Type': 'text/html'});
-                    res.end("You've been blacklisted");
+                    // Uncomment for blaclisting features
+                    //res.writeHead(200, {'Content-Type': 'text/html'});
+                    //res.end("You've been blacklisted");
                 } // if
             });
         });
