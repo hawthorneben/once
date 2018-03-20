@@ -49,38 +49,34 @@ http.createServer(function (req, res)
                         }
                     });
                 } // if
-            });
-        });
+                else // user is not blacklisted yet
+                {
+                    var statement = "INSERT INTO LOOKUP values($ip)";
 
-        // If the IP is not already blacklisted, we'll add it to the DB
-        if (!blacklisted)
-        {
-            var statement = "INSERT INTO LOOKUP values($ip)";
-
-            db.serialize(() => {
-                db.run(statement, { $ip: ip[0] }, function(err) {
-                    if (err)
+                    db.run(statement, { $ip : ip[0] }, function(err)
                     {
-                        console.error(err);
-                    }
-                });
+                        if (err)
+                        {
+                            console.error(err);
+                        }
+                    },
+                    function()
+                    { // Finished callback
+                        fs.readFile("index.html", function(err, data) {
+                            if (err)
+                            {
+                                res.statusCode = 500;
+                                res.end(`Error getting the file: ${err}.`);
+                            }
+                            else
+                            {
+                                res.writeHead(200, {'Content-Type': 'text/html'});
+                                res.end(data);
+                            }
+                        });
+                    });
+                }
             });
-        }
-    }
-
-    if (!blacklisted)
-    {
-        fs.readFile("index.html", function(err, data) {
-            if (err)
-            {
-                res.statusCode = 500;
-                res.end(`Error getting the file: ${err}.`);
-            }
-            else
-            {
-                res.writeHead(200, {'Content-Type': 'text/html'});
-                res.end(data);
-            }
         });
     }
 }).listen(80);
