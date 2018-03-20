@@ -25,13 +25,13 @@ http.createServer(function (req, res)
     res.write(favicon);
     if (ip)
     {
-        var checkString = "SELECT count(*) FROM LOOKUP WHERE VALUE = $ip";
+        var checkString = "SELECT count(*) as num FROM LOOKUP WHERE VALUE = $ip";
         db.serialize(() =>
         {
             db.each(checkString, { $ip: ip[0] }, function(err, row)
             {
-                console.log(row.count);
-                if (row.count > 0)
+                console.log(row.num);
+                if (row.num > 0)
                 {
                     blacklisted = true;
                 }
