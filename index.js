@@ -39,22 +39,28 @@ http.createServer(function (req, res)
             {
                 if (blacklisted)
                 {
-                    res.write("You've been blacklisted");
+                    res.write("You've been blacklisted ");
                 } // if
             });
         });
-        var statement = "INSERT INTO LOOKUP values($ip)";
 
-        db.serialize(() => {
-            db.run(statement, { $ip: ip[0] }, function(err) {
-                if (err)
-                {
-                    console.error(err);
-                }
+        // If the IP is not already blacklisted, we'll add it to the DB
+        if (!blacklisted)
+        {
+            var statement = "INSERT INTO LOOKUP values($ip)";
+
+            db.serialize(() => {
+                db.run(statement, { $ip: ip[0] }, function(err) {
+                    if (err)
+                    {
+                        console.error(err);
+                    }
+                });
             });
-        });
+        }
     }
 
+    res.write("<table>");
     db.serialize(() => {
         db.each("SELECT VALUE as ip FROM LOOKUP", function(err, row)
         {
@@ -62,9 +68,10 @@ http.createServer(function (req, res)
             {
                 console.error(err.message);
             }
-            res.write(row.ip + " ");
+            res.write("<tr><td>" + row.ip + "</td></tr>");
         }, function() {
             db.close();
+            res.write("</table>")
             res.end();
         });
     });
