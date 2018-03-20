@@ -22,9 +22,17 @@ http.createServer(function (req, res)
     res.write(title);
     if (ip)
     {
-        db.serialize(function() {
-            db.run("INSERT INTO LOOKUP values(" + ip[0] +") WHERE NOT EXISTS" +
-            "(SELECT VALUE FROM LOOKUP WHERE VALUE = " + ip[0] + ")");
+        var statement = "INSERT INTO LOOKUP values($ip) WHERE NOT EXISTS" +
+            "(SELECT VALUE FROM LOOKUP WHERE VALUE = $ip)";
+
+        console.log(statement);
+        db.serialize(() => {
+            db.run(statement, { $ip: ip[0] }, function(err) {
+                if (err)
+                {
+                    console.error(err);
+                }
+            });
         });
     }
 
