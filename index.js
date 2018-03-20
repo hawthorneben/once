@@ -68,7 +68,7 @@ http.createServer(function (req, res)
         }
     }
 
-    if (true)
+    if (!blacklisted)
     {
         fs.readFile("index.html", function(err, data) {
             if (err)
