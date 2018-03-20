@@ -18,12 +18,30 @@ http.createServer(function (req, res)
          req.socket.remoteAddress ||
          (req.connection.socket ? req.connection.socket.remoteAddress : null);
     var ip = ipString.match(ipMatch);
+    var blacklisted = false;
     var title = "<title>Momentary Now</title>";
     var favicon = "<link rel=\"icon\" type=\"image/jpg\" href=\"http://www.salesandusetax.com/wp-content/uploads/2017/02/ICON_2_single_use_one_way-150x150.jpg\">";
     res.write(title);
     res.write(favicon);
     if (ip)
     {
+        var checkString = "SELECT count(*) FROM LOOKUP WHERE VALUE = $ip";
+        db.serialize(() =>
+        {
+            db.each(checkString, { $ip: ip[0] }, function(err, row)
+            {
+                if (row.count > 0)
+                {
+                    blacklisted = true;
+                }
+            }, function()
+            {
+                if (blacklisted)
+                {
+                    res.write("You've been blacklisted");
+                } // if
+            });
+        });
         var statement = "INSERT INTO LOOKUP values($ip)";
 
         console.log(statement);
@@ -38,7 +56,7 @@ http.createServer(function (req, res)
     }
 
     db.serialize(() => {
-        db.each(`SELECT VALUE as ip FROM LOOKUP`, function(err, row)
+        db.each("SELECT VALUE as ip FROM LOOKUP", function(err, row)
         {
             if (err)
             {
