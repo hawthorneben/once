@@ -19,7 +19,7 @@ http.createServer(function (req, res)
          (req.connection.socket ? req.connection.socket.remoteAddress : null);
     var ip = ipString.match(ipMatch);
     var title = "<title>Momentary Now</title>";
-    var favicon = "<link rel=\"icon\" type=\"image/jpg\" href=\"icon.jpg\">";
+    var favicon = "<link rel=\"icon\" type=\"image/jpg\" href=\"http://www.salesandusetax.com/wp-content/uploads/2017/02/ICON_2_single_use_one_way-150x150.jpg\">";
     res.write(title);
     res.write(favicon);
     if (ip)
