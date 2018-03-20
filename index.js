@@ -1,8 +1,8 @@
 var http = require('http');
 var sqlite3 = require('sqlite3');
+var fs = require('fs');
 http.createServer(function (req, res)
 {
-    res.writeHead(200, {'Content-Type': 'text/html'});
 
     // Open database
     let db = new sqlite3.Database('ip.db', sqlite3.OPEN_READWRITE, (err) =>
@@ -19,10 +19,7 @@ http.createServer(function (req, res)
          (req.connection.socket ? req.connection.socket.remoteAddress : null);
     var ip = ipString.match(ipMatch);
     var blacklisted = false;
-    var title = "<title>Momentary Now</title>";
-    var favicon = "<link rel=\"icon\" type=\"image/jpg\" href=\"http://www.salesandusetax.com/wp-content/uploads/2017/02/ICON_2_single_use_one_way-150x150.jpg\">";
-    res.write(title);
-    res.write(favicon);
+
     if (ip)
     {
         var checkString = "SELECT count(*) as num FROM LOOKUP WHERE VALUE = $ip";
@@ -39,7 +36,8 @@ http.createServer(function (req, res)
             {
                 if (blacklisted)
                 {
-                    res.write("You've been blacklisted ");
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    res.end("You've been blacklisted");
                 } // if
             });
         });
@@ -60,42 +58,19 @@ http.createServer(function (req, res)
         }
     }
 
-    res.write("<table>");
-    db.serialize(() => {
-        db.each("SELECT VALUE as ip FROM LOOKUP", function(err, row)
-        {
+    if (true)
+    {
+        fs.readFile("index.html", function(err, data) {
             if (err)
             {
-                console.error(err.message);
+                res.statusCode = 500;
+                res.end(`Error getting the file: ${err}.`);
             }
-            res.write("<tr><td>" + row.ip + "</td></tr>");
-        }, function() {
-            db.close();
-            res.write("</table>")
-            res.end();
+            else
+            {
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                res.end(data);
+            }
         });
-    });
+    }
 }).listen(80);
-
-function buildString(db)
-{
-    let ipAddresses = new Array();
-
-
-    console.log(ipAddresses);
-    //return ipAddresses;
-}
-
-function StringBuilder() {
-    this._array = [];
-    this._index = 0;
-}
-
-StringBuilder.prototype.append = function (str) {
-    this._array[this._index] = str;
-    this._index++;
-}
-
-StringBuilder.prototype.toString = function () {
-    return this._array.join('');
-}
