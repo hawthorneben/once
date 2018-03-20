@@ -24,14 +24,42 @@ http.createServer(function (req, res)
     {
         res.write(ip[0]);
     }
-    res.end();
-
-    // Close the database
-    db.close((err) =>
-    {
-        if (err)
+    db.serialize(() => {
+        db.each(`SELECT VALUE as ip FROM LOOKUP`, function(err, row)
         {
-            console.error(err.message);
-        }
+            if (err)
+            {
+                console.error(err.message);
+            }
+            res.write(row.ip);
+        }, function() {
+            db.close();
+            res.end();
+        });
+
+        //res.end();
     });
 }).listen(80);
+
+function buildString(db)
+{
+    let ipAddresses = new Array();
+
+
+    console.log(ipAddresses);
+    //return ipAddresses;
+}
+
+function StringBuilder() {
+    this._array = [];
+    this._index = 0;
+}
+
+StringBuilder.prototype.append = function (str) {
+    this._array[this._index] = str;
+    this._index++;
+}
+
+StringBuilder.prototype.toString = function () {
+    return this._array.join('');
+}
