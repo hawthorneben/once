@@ -19,9 +19,7 @@ http.createServer(function (req, res)
          (req.connection.socket ? req.connection.socket.remoteAddress : null);
     var ip = ipString.match(ipMatch);
     var title = "<title>Momentary Now</title>";
-    var favicon = "<link rel=\"icon\"
-        type=\"image/jpg\"
-        href=\"icon.jpg\">"
+    var favicon = "<link rel=\"icon\" type=\"image/jpg\" href=\"icon.jpg\">";
     res.write(title);
     res.write(favicon);
     if (ip)
