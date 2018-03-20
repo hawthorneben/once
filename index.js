@@ -30,6 +30,7 @@ http.createServer(function (req, res)
         {
             db.each(checkString, { $ip: ip[0] }, function(err, row)
             {
+                console.log(row.count);
                 if (row.count > 0)
                 {
                     blacklisted = true;
@@ -44,7 +45,6 @@ http.createServer(function (req, res)
         });
         var statement = "INSERT INTO LOOKUP values($ip)";
 
-        console.log(statement);
         db.serialize(() => {
             db.run(statement, { $ip: ip[0] }, function(err) {
                 if (err)
