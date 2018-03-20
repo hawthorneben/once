@@ -36,9 +36,18 @@ http.createServer(function (req, res)
             {
                 if (blacklisted)
                 {
-                    // Uncomment for blaclisting features
-                    //res.writeHead(200, {'Content-Type': 'text/html'});
-                    //res.end("You've been blacklisted");
+                    fs.readFile("rejection.html", function(err, data) {
+                        if (err)
+                        {
+                            res.statusCode = 500;
+                            res.end(`Error getting the file: ${err}.`);
+                        }
+                        else
+                        {
+                            res.writeHead(200, {'Content-Type': 'text/html'});
+                            res.end(data);
+                        }
+                    });
                 } // if
             });
         });
