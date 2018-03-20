@@ -27,11 +27,11 @@ http.createServer(function (req, res)
         {
             db.each(checkString, { $ip: ip[0] }, function(err, row)
             {
-                console.log(row.num);
                 if (row.num > 0)
                 {
                     blacklisted = true;
                 }
+                console.log(blacklisted);
             }, function()
             {
                 if (blacklisted)
