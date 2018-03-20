@@ -22,8 +22,7 @@ http.createServer(function (req, res)
     res.write(title);
     if (ip)
     {
-        var statement = "INSERT INTO LOOKUP values($ip) WHERE NOT EXISTS" +
-            "(SELECT VALUE FROM LOOKUP WHERE VALUE = $ip)";
+        var statement = "INSERT INTO LOOKUP values($ip)";
 
         console.log(statement);
         db.serialize(() => {
