@@ -22,7 +22,7 @@ http.createServer(function (req, res)
     res.write(title);
     if (ip)
     {
-        res.write(ip);
+        res.write(ip[0]);
     }
     res.end();
 
